@@ -1,51 +1,71 @@
-const blocks = document.querySelectorAll(".block")
-
-const playerText = document.getElementById("player")
+const blocks = document.querySelectorAll(".block")      
+const playerText = document.getElementById("player")    
 const errorText = document.getElementById("error")
+const restartBtn = document.getElementById('btn')
 
-let player = "X"
+let player = "X"                                        
 let gameOver = false;
+let tie = false;
 let winner;
 
-function startGame() {
+function startGame() {                                     
     playerText.textContent = `${player}'s Turn!!!`
 
-    blocks.forEach(block => block.addEventListener("click", () => chooseArea(block)))  
-   
+    blocks.forEach(block => block.addEventListener("click", () => chooseArea(block)))       
 }
 
-function chooseArea(block) {
-    if(block.textContent === ""){
-         block.textContent = player;
-         turnPlayer();
+function chooseArea(block) {                               
+    if (block.textContent === "") {
+        block.textContent = player;
+        
+        turnPlayer();                                       
     }
-    else{
-        //errorText.textContent = "Hey, it's already marked.. Choose another block!!"
+    else {
+
         block.style.border = "3px solid red"
         alert("Hey, it's already marked.. Choose another block!!")
         setTimeout(() => {
-            block.style.border ="1px solid black"
+            block.style.border = "1px solid black"
         }, 1500);
-        
+
     }
     checkWin();
     checkTie();
 
-    if(gameOver){
+    if (gameOver) {
         playerText.textContent = `Game is over, ${winner} Won !!!`
         blocks.forEach(block => block.style.pointerEvents = 'none')
+        restartBtn.style.visibility = "visible";
+        restartBtn.addEventListener("click", () => restartGame())
     }
-    
 
-    
-    
+    if(tie){
+        restartBtn.style.visibility = "visible";
+        restartBtn.addEventListener("click", () => restartGame())
+        playerText.textContent = "Tie !!!";
+        blocks.forEach(blocks => block.style.pointerEvents = 'none');
+    }
+
+
+
+
+}
+
+function restartGame() {
+    blocks.forEach(block => block.textContent = "")
+    blocks.forEach(block => block.style.pointerEvents = "all")
+    gameOver = false
+    tie = false
+    restartBtn.style.visibility = "hidden";
+    player = "X"
+    playerText.textContent = `${player}'s Turn!!!`
 }
 
 function turnPlayer() {
     if (player === "X") {
         player = "O";
         playerText.textContent = `${player}'s Turn!!!`
-        
+
     }
     else if (player === "O") {
         player = "X";
@@ -53,7 +73,7 @@ function turnPlayer() {
     }
 }
 
-function checkWin(){
+function checkWin() {
     checkRows()
     checkColumns()
     checkDiagonals()
@@ -61,81 +81,80 @@ function checkWin(){
 
 }
 
-function checkTie(){
+function checkTie() {
 
     const values = [];
-    blocks.forEach(blocks => values.push (blocks.textContent));
-    if(!values.includes("") && gameOver === false){
-        playerText.textContent = "Tie !!!";
-        blocks.forEach(blocks => block.style.pointerEvents = 'none');
+    blocks.forEach(blocks => values.push(blocks.textContent));
+    if (!values.includes("") && gameOver === false) {
+        tie = true;
     }
 
 }
 
-function checkRows(){
+function checkRows() {
 
-    let row1= blocks[0].textContent == blocks[1].textContent 
-    && blocks[0].textContent == blocks[2].textContent 
-    && blocks[0].textContent !== "";
-    
-    let row2= blocks[3].textContent == blocks[4].textContent 
-    && blocks[3].textContent == blocks[5].textContent 
-    && blocks[3].textContent !== "";
+    let row1 = blocks[0].textContent == blocks[1].textContent
+        && blocks[0].textContent == blocks[2].textContent
+        && blocks[0].textContent !== "";
 
-    let row3= blocks[6].textContent == blocks[7].textContent 
-    && blocks[6].textContent == blocks[8].textContent 
-    && blocks[6].textContent !== "";
+    let row2 = blocks[3].textContent == blocks[4].textContent
+        && blocks[3].textContent == blocks[5].textContent
+        && blocks[3].textContent !== "";
 
-    if(row1 || row2 || row3){
+    let row3 = blocks[6].textContent == blocks[7].textContent
+        && blocks[6].textContent == blocks[8].textContent
+        && blocks[6].textContent !== "";
+
+    if (row1 || row2 || row3) {
         gameOver = true;
     }
 
-    if(row1) return winner = blocks[0].textContent;
-    if(row2) return winner = blocks[3].textContent;
-    if(row3) return winner = blocks[6].textContent;
+    if (row1) return winner = blocks[0].textContent;
+    if (row2) return winner = blocks[3].textContent;
+    if (row3) return winner = blocks[6].textContent;
 
 }
 
 
-function checkColumns(){
-    let Column1= blocks[0].textContent == blocks[3].textContent 
-    && blocks[0].textContent == blocks[6].textContent
-    && blocks[0].textContent !== "";
+function checkColumns() {
+    let Column1 = blocks[0].textContent == blocks[3].textContent
+        && blocks[0].textContent == blocks[6].textContent
+        && blocks[0].textContent !== "";
 
-    let Column2= blocks[1].textContent == blocks[4].textContent 
-    && blocks[1].textContent == blocks[7].textContent
-    && blocks[1].textContent !== "";
+    let Column2 = blocks[1].textContent == blocks[4].textContent
+        && blocks[1].textContent == blocks[7].textContent
+        && blocks[1].textContent !== "";
 
-    let Column3= blocks[2].textContent == blocks[5].textContent 
-    && blocks[2].textContent == blocks[8].textContent
-    && blocks[2].textContent !== "";
+    let Column3 = blocks[2].textContent == blocks[5].textContent
+        && blocks[2].textContent == blocks[8].textContent
+        && blocks[2].textContent !== "";
 
-    if(Column1 || Column2 || Column3){
+    if (Column1 || Column2 || Column3) {
         gameOver = true;
     }
 
-    if(Column1) return winner = blocks[0].textContent;
-    if(Column2) return winner = blocks[4].textContent;
-    if(Column3) return winner = blocks[8].textContent;
+    if (Column1) return winner = blocks[0].textContent;
+    if (Column2) return winner = blocks[4].textContent;
+    if (Column3) return winner = blocks[8].textContent;
 
 }
 
-function checkDiagonals(){
-    let Diagonal1= blocks[0].textContent == blocks[4].textContent 
-    && blocks[0].textContent == blocks[8].textContent
-    && blocks[0].textContent !== "";
+function checkDiagonals() {
+    let Diagonal1 = blocks[0].textContent == blocks[4].textContent
+        && blocks[0].textContent == blocks[8].textContent
+        && blocks[0].textContent !== "";
 
-    let Diagonal2= blocks[2].textContent == blocks[4].textContent 
-    && blocks[2].textContent == blocks[6].textContent
-    && blocks[2].textContent !== "";
+    let Diagonal2 = blocks[2].textContent == blocks[4].textContent
+        && blocks[2].textContent == blocks[6].textContent
+        && blocks[2].textContent !== "";
 
-    if(Diagonal1 || Diagonal2){
+    if (Diagonal1 || Diagonal2) {
         gameOver = true;
     }
 
-    if(Diagonal1) return winner = blocks[0].textContent;
-    if(Diagonal2) return winner = blocks[2].textContent;
-    
+    if (Diagonal1) return winner = blocks[0].textContent;
+    if (Diagonal2) return winner = blocks[2].textContent;
+
 }
 
 
